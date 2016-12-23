@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Weather</title>
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css" media="screen">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<style>
+		img {width:100px;}
+		caption {font-size: 400%;}
+	</style>
+</head>
+</head>
+<body>
+
+<main><!--this is like the wrapper-->
+	<div class="row">
+	<form action="#" method="#" role="form">
+		<div class="three columns">
+			<label class="sr-only" for="">Enter a City / Post Code</label>
+			<input type="text" class="u-full-width" name ="city" id="search_str" placeholder="13008" value ="13008" autofocus required>
+			<button type="submit" class="button-primary">Submit</button>
+		</div>
+	</form>	
+		<div class="nine columns" id="wxcontent" style="text-align:center;">
+		</div>
+	</div>
+</main>
+<script>
+$(document).ready(function() {
+    $('form').submit(function(f){
+	if(!f){ 
+	// check form not blank
+		alert("Please enter a valid search...");	
+	}else{
+    	//gather the form data
+	 	var formdata = $(this).serializeArray();
+	 	city = formdata[0].value;
+	 	console.log(city);
+	 	// your code here (build up your url)
+	 	var mykey = '5f09d6359aea288a86671726b3de1f80';
+	 	var url ="";
+	 	url = "http://api.openweathermap.org/data/2.5/weather?q="+city+"&&appid="+mykey;
+	 	// make a get request from the API
+
+	        $.get(url, function(JSONobject) {
+	            // your code here 1.8 x (K - 273) + 32
+	            var tempF = Math.round(1.8*(JSONobject.main.temp -273.15)+32);
+	            var name = JSONobject.name +', '+JSONobject.sys.country
+			    var text = JSONobject.weather[0].description;
+			    var img =  "http://openweathermap.org/img/w/" +JSONobject.weather[0].icon + ".png";
+			 	console.log(tempF,name,text,img);
+			 	// call assemblePage function
+			 	assemblePage(tempF,name,text,img);
+	        }, 'json');
+
+        // don't forget to return false so the page doesn't refresh
+        return false;
+        }
+    });
+
+});
+
+function assemblePage (tempF,name,text,img){
+	$('#wxcontent').html('<div class="five columns"><h1 class="temp">'+tempF+'</h1><h3 class="city">'+name+'</h3></div><div class="four columns"><img src="'+img+'" alt="'+text+'"><br><em>'+text+'</em></div></div>');
+}
+// http://api.openweathermap.org/data/2.5/weather?q=Providence&&appid=5f09d6359aea288a86671726b3de1f80
+</script>
+</body>
+</html>
+
